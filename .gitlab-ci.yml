@@ -1,12 +1,26 @@
+image: node:latest
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+
 pages:
   stage: deploy
   script:
-    - mkdir .public
-    - cp -r ./* .public
     - rm -rf public
-    - mv .public public
+    - mkdir public && cp -rf dist/* public
   artifacts:
     paths:
       - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    expire_in: 30 days
+
+cache:
+  paths:
+    - node_modules
+    - dist
